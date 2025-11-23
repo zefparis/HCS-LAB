@@ -128,6 +128,35 @@ func (g *Generator) GenerateWithOptions(in *InputProfile, opts *GeneratorOptions
 		}
 	}
 
+	// Generate canonical profile data for U7 signatures (uses normalized + optional combined profile)
+	canonical, err := CanonicalProfileData(normalized, output.CombinedProfile)
+	if err != nil {
+		return nil, fmt.Errorf("failed to build canonical profile: %w", err)
+	}
+
+	// Load secret key from environment (required for U7). This is a hard failure
+	// to avoid accidentally generating unsigned or weakly signed codes.
+	secret, err := LoadSecretKey()
+	if err != nil {
+		return nil, fmt.Errorf("failed to load secret key: %w", err)
+	}
+
+	// Compute quantum-style signatures using the canonical data, secret key, and persistent salt.
+	qsigHex, b3Hex, err := ComputeQuantumSignatures(canonical, secret, g.salt)
+	if err != nil {
+		return nil, fmt.Errorf("failed to compute quantum signatures: %w", err)
+	}
+
+	// Format HCS-U7 code using the normalized profile and signatures.
+	u7, err := FormatHCSU7(normalized, qsigHex, b3Hex)
+	if err != nil {
+		return nil, fmt.Errorf("failed to format HCS-U7 code: %w", err)
+	}
+
+	output.CodeU7 = u7
+	output.QSig = qsigHex
+	output.B3Sig = b3Hex
+
 	return output, nil
 }
 

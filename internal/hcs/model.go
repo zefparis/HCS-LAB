@@ -39,6 +39,9 @@ type OutputHCS struct {
 	CodeU3          string           `json:"codeU3"`
 	CodeU4          string           `json:"codeU4,omitempty"`
 	CodeU5          string           `json:"codeU5,omitempty"` // NEW: HCS-U5 fusion code
+	CodeU7          string           `json:"codeU7,omitempty"`
+	QSig            string           `json:"qsig,omitempty"`
+	B3Sig           string           `json:"b3sig,omitempty"`
 	Chip            string           `json:"chip"`
 	ChineseProfile  *ChineseProfile  `json:"chineseProfile,omitempty"`  // NEW: Chinese BaZi profile
 	CombinedProfile *CombinedProfile `json:"combinedProfile,omitempty"` // NEW: Combined profiles

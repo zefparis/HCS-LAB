@@ -32,6 +32,10 @@ func getTestInput() *hcs.InputProfile {
 }
 
 func TestGeneratorDeterminism(t *testing.T) {
+	// Ensure secret key is set so that U7 generation can complete
+	if err := os.Setenv("HCS_SECRET_KEY", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"); err != nil {
+		t.Fatalf("failed to set HCS_SECRET_KEY: %v", err)
+	}
 	// Create a temporary directory for salt
 	tempDir := t.TempDir()
 
@@ -76,6 +80,9 @@ func TestGeneratorDeterminism(t *testing.T) {
 }
 
 func TestSaltPersistence(t *testing.T) {
+	if err := os.Setenv("HCS_SECRET_KEY", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"); err != nil {
+		t.Fatalf("failed to set HCS_SECRET_KEY: %v", err)
+	}
 	// Create a temporary directory
 	tempDir := t.TempDir()
 	saltPath := filepath.Join(tempDir, ".hcs_salt")
