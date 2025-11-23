@@ -1,0 +1,44 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Go build cache
+/hcsgen
+/hcsapi
+
+# Dependency directories
+vendor/
+
+# IDE directories
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# HCS salt file (sensitive)
+.hcs_salt
+
+# Output files from examples
+examples/*_output.json
+examples/*_output.hcs
+
+# Environment files
+.env
+.env.local
+
+# Railway specific
+railway.json

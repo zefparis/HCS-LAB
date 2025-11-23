@@ -1,0 +1,20 @@
+{
+  "dominantElement": "Air",
+  "modal": {
+    "cardinal": 0.31,
+    "fixed": 0.23,
+    "mutable": 0.46
+  },
+  "cognition": {
+    "fluid": 0.52,
+    "crystallized": 0.13,
+    "verbal": 0.53,
+    "strategic": 0.15,
+    "creative": 0.33
+  },
+  "interaction": {
+    "pace": "balanced",
+    "structure": "medium",
+    "tone": "precise"
+  }
+}

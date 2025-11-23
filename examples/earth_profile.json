@@ -1,0 +1,20 @@
+{
+  "dominantElement": "Earth",
+  "modal": {
+    "cardinal": 0.25,
+    "fixed": 0.60,
+    "mutable": 0.15
+  },
+  "cognition": {
+    "fluid": 0.35,
+    "crystallized": 0.75,
+    "verbal": 0.40,
+    "strategic": 0.80,
+    "creative": 0.20
+  },
+  "interaction": {
+    "pace": "slow",
+    "structure": "high",
+    "tone": "warm"
+  }
+}
