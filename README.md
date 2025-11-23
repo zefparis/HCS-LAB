@@ -1,6 +1,6 @@
 # HCS Lab API
 
-A standalone Go service for generating Human Coordination System (HCS) codes. This is a private backend API focused exclusively on HCS-U3 and HCS-U4 code generation, without any astrology-specific logic or Swiss Ephemeris dependencies.
+A standalone Go service for generating Human Coordination System (HCS) codes. This is a private backend API that generates HCS-U3, HCS-U4, and the new HCS-U5 fusion codes that combine Western and Chinese astrological profiles into a unified cognitive signature.
 
 ## Overview
 
@@ -8,9 +8,31 @@ The HCS Lab API provides:
 - **Deterministic code generation** with persistent salt management
 - **HCS-U3 encoding** with structured segments for element, modal balance, cognition, interaction, and CHIP signature
 - **HCS-U4 encoding** (base64 stub implementation, ready for future base62)
+- **HCS-U5 encoding** NEW: Fusion of Western and Chinese (BaZi) astrology profiles
+- **Chinese BaZi computation** Four Pillars of Destiny calculation
+- **Fusion profiles** Intelligent merging of Western and Chinese astrological systems
 - **RESTful HTTP API** for integration with dashboards and tools
 - **CLI tool** for command-line code generation
 - **Secure offline operation** with no external network dependencies
+
+## HCS-U5 Format Specification (NEW)
+
+The HCS-U5 code represents a fusion of Western and Chinese astrology:
+```
+HCS-U5|XX|W:<hex>|C:<hex>|F:<hex>|CHIP:<12-hex>
+```
+
+### Segments:
+- **XX**: 2-character fusion ID (combined element and balance encoding)
+- **W:<hex>**: 16-bit compressed Western profile (4 hex chars)
+- **C:<hex>**: 16-bit compressed Chinese BaZi profile (4 hex chars)  
+- **F:<hex>**: 16-bit compressed fusion traits (4 hex chars)
+- **CHIP**: 12-character hex signature from SHA256 hash
+
+### Example:
+```
+HCS-U5|A1|W:3c4f|C:8a2d|F:6b91|CHIP:def012345678
+```
 
 ## HCS-U3 Format Specification
 
@@ -130,6 +152,14 @@ Body:
     "pace": "balanced",
     "structure": "medium",
     "tone": "precise"
+  },
+  "birthInfo": {  // Optional: enables HCS-U5 generation
+    "year": 1990,
+    "month": 6,
+    "day": 15,
+    "hour": 14,
+    "minute": 30,
+    "timezone": "UTC"
   }
 }
 
@@ -138,7 +168,36 @@ Response:
   "input": { ... },
   "codeU3": "HCS-U3|E:A|MOD:c31f23m46|COG:F52C13V53S15Cr33|INT:PB=B,SM=M,TN=P|CHIP:aae673a93e1f",
   "codeU4": "HCS-U4|eyJwcm9maWxlIjp7ImVsZW1lbnQiOiJB...",
-  "chip": "aae673a93e1f"
+  "codeU5": "HCS-U5|A1|W:3c4f|C:8a2d|F:6b91|CHIP:def012345678",  // If birthInfo provided
+  "chip": "aae673a93e1f",
+  "chineseProfile": {  // If birthInfo provided
+    "yearPillar": "Geng-Wu",
+    "monthPillar": "Ren-Wu",
+    "dayPillar": "Jia-Chen",
+    "hourPillar": "Xin-Wei",
+    "yinYangBalance": 0.6,
+    "elementBalance": {
+      "Wood": 0.2,
+      "Fire": 0.3,
+      "Earth": 0.2,
+      "Metal": 0.15,
+      "Water": 0.15
+    },
+    "dayMaster": "Jia",
+    "dayMasterStrength": 0.7
+  },
+  "combinedProfile": {  // If birthInfo provided
+    "western": { ... },
+    "chinese": { ... },
+    "fusion": {
+      "elementSignature": { ... },
+      "cognitiveFusion": { ... },
+      "tempoSignals": { ... },
+      "unifiedBalance": 0.65,
+      "harmonicResonance": 0.75,
+      "fusionId": "A1"
+    }
+  }
 }
 ```
 
@@ -163,6 +222,14 @@ Response:
     "pace": "balanced",
     "structure": "medium",
     "tone": "precise"
+  },
+  "birthInfo": {  // Optional: for Chinese BaZi and HCS-U5 generation
+    "year": 1990,
+    "month": 6,
+    "day": 15,
+    "hour": 14,
+    "minute": 30,
+    "timezone": "UTC"
   }
 }
 ```
@@ -174,6 +241,13 @@ Response:
 - **interaction.pace**: "balanced", "fast", or "slow"
 - **interaction.structure**: "low", "medium", or "high"
 - **interaction.tone**: "warm", "neutral", "sharp", or "precise"
+- **birthInfo** (optional):
+  - **year**: 1900-2100
+  - **month**: 1-12
+  - **day**: 1-31
+  - **hour**: 0-23
+  - **minute**: 0-59
+  - **timezone**: IANA timezone string (e.g., "UTC", "America/New_York")
 
 ## Docker Deployment
 
@@ -201,6 +275,10 @@ Test coverage includes:
 - Deterministic code generation
 - Salt persistence and management
 - HCS-U3 format validation
+- HCS-U5 format validation and encoding
+- BaZi pillar computation
+- Chinese element balance calculation
+- Fusion profile generation
 - Input validation and error handling
 - Percentage rounding and clamping
 - CHIP signature generation
@@ -226,6 +304,10 @@ hcs-lab-api/
 │       ├── generator.go # Core generation logic
 │       ├── codec_u3.go  # HCS-U3 encoding
 │       ├── codec_u4.go  # HCS-U4 encoding (stub)
+│       ├── codec_u5.go  # HCS-U5 fusion encoding
+│       ├── bazi.go      # Chinese BaZi computation
+│       ├── chinese.go   # Chinese profile generation
+│       ├── fusion.go    # Western-Chinese fusion logic
 │       ├── crypto.go    # SHA256 + CHIP logic
 │       └── salt.go      # Salt management
 ├── tests/               # Test suites

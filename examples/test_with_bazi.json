@@ -1,0 +1,28 @@
+{
+  "dominantElement": "Fire",
+  "modal": {
+    "cardinal": 0.45,
+    "fixed": 0.30,
+    "mutable": 0.25
+  },
+  "cognition": {
+    "fluid": 0.70,
+    "crystallized": 0.60,
+    "verbal": 0.65,
+    "strategic": 0.80,
+    "creative": 0.75
+  },
+  "interaction": {
+    "pace": "fast",
+    "structure": "medium",
+    "tone": "sharp"
+  },
+  "birthInfo": {
+    "year": 1990,
+    "month": 6,
+    "day": 15,
+    "hour": 14,
+    "minute": 30,
+    "timezone": "UTC"
+  }
+}

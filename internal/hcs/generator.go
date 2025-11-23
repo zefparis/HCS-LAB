@@ -89,6 +89,45 @@ func (g *Generator) GenerateWithOptions(in *InputProfile, opts *GeneratorOptions
 		output.CodeU4 = u4Code
 	}
 
+	// Generate Chinese profile and U5 if birth info is provided
+	if in.BirthInfo != nil {
+		// Compute Chinese BaZi profile
+		chineseProfile, err := ComputeChineseProfile(*in.BirthInfo)
+		if err != nil {
+			// Log error but don't fail the entire generation
+			// Chinese profile is optional enhancement
+			fmt.Printf("Warning: failed to compute Chinese profile: %v\n", err)
+		} else {
+			output.ChineseProfile = chineseProfile
+
+			// Create Western profile from input
+			westernProfile := &WesternProfile{
+				DominantElement: in.DominantElement,
+				Modal:           in.Modal,
+				Cognition:       in.Cognition,
+				Interaction:     in.Interaction,
+			}
+
+			// Build fusion profile
+			fusionProfile := BuildFusionProfile(westernProfile, chineseProfile)
+
+			// Create combined profile
+			output.CombinedProfile = &CombinedProfile{
+				Western: *westernProfile,
+				Chinese: *chineseProfile,
+				Fusion:  *fusionProfile,
+			}
+
+			// Generate HCS-U5 code
+			u5Code, err := EncodeU5(westernProfile, chineseProfile, fusionProfile, g.salt)
+			if err != nil {
+				fmt.Printf("Warning: failed to generate U5 code: %v\n", err)
+			} else {
+				output.CodeU5 = u5Code
+			}
+		}
+	}
+
 	return output, nil
 }
 
@@ -147,6 +186,13 @@ func (g *Generator) validateInput(in *InputProfile) error {
 	validTone := map[string]bool{"warm": true, "neutral": true, "sharp": true, "precise": true}
 	if !validTone[in.Interaction.Tone] {
 		return fmt.Errorf("invalid tone: %s", in.Interaction.Tone)
+	}
+
+	// Validate optional birth info if provided
+	if in.BirthInfo != nil {
+		if err := validateBirthInfo(*in.BirthInfo); err != nil {
+			return fmt.Errorf("invalid birth info: %w", err)
+		}
 	}
 
 	return nil

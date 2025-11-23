@@ -122,6 +122,9 @@ func main() {
 	if output.CodeU4 != "" {
 		hcsContent = append(hcsContent, output.CodeU4)
 	}
+	if output.CodeU5 != "" {
+		hcsContent = append(hcsContent, output.CodeU5)
+	}
 	hcsData := []byte(strings.Join(hcsContent, "\n"))
 	if err := os.WriteFile(outputHCSFile, hcsData, 0644); err != nil {
 		fmt.Fprintf(os.Stderr, "Error writing output.hcs: %v\n", err)
@@ -140,7 +143,23 @@ func main() {
 		if output.CodeU4 != "" {
 			fmt.Printf("HCS-U4: %s\n", output.CodeU4)
 		}
-		fmt.Printf("CHIP: %s\n", output.Chip)
+		if output.CodeU5 != "" {
+			fmt.Printf("HCS-U5: %s\n", output.CodeU5)
+			if output.ChineseProfile != nil {
+				fmt.Printf("\nChinese BaZi Profile detected:\n")
+				fmt.Printf("  Four Pillars: %s | %s | %s | %s\n",
+					output.ChineseProfile.YearPillar,
+					output.ChineseProfile.MonthPillar,
+					output.ChineseProfile.DayPillar,
+					output.ChineseProfile.HourPillar)
+				fmt.Printf("  Day Master: %s (Strength: %.0f%%)\n",
+					output.ChineseProfile.DayMaster,
+					output.ChineseProfile.DayMasterStrength*100)
+				fmt.Printf("  Yin/Yang Balance: %.0f%% Yang\n",
+					output.ChineseProfile.YinYangBalance*100)
+			}
+		}
+		fmt.Printf("\nCHIP: %s\n", output.Chip)
 		fmt.Printf("\nOutput written to:\n")
 		fmt.Printf("  - %s (full JSON)\n", outputJSONFile)
 		fmt.Printf("  - %s (codes only)\n", outputHCSFile)

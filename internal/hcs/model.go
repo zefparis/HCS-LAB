@@ -29,12 +29,17 @@ type InputProfile struct {
 	Modal           ModalBalance           `json:"modal"`
 	Cognition       CognitionProfile       `json:"cognition"`
 	Interaction     InteractionPreferences `json:"interaction"`
+	// Optional birth info for Chinese astrology
+	BirthInfo *BirthInfo `json:"birthInfo,omitempty"`
 }
 
 // OutputHCS represents the generated HCS codes and metadata
 type OutputHCS struct {
-	Input  InputProfile `json:"input"`
-	CodeU3 string       `json:"codeU3"`
-	CodeU4 string       `json:"codeU4,omitempty"`
-	Chip   string       `json:"chip"`
+	Input           InputProfile     `json:"input"`
+	CodeU3          string           `json:"codeU3"`
+	CodeU4          string           `json:"codeU4,omitempty"`
+	CodeU5          string           `json:"codeU5,omitempty"` // NEW: HCS-U5 fusion code
+	Chip            string           `json:"chip"`
+	ChineseProfile  *ChineseProfile  `json:"chineseProfile,omitempty"`  // NEW: Chinese BaZi profile
+	CombinedProfile *CombinedProfile `json:"combinedProfile,omitempty"` // NEW: Combined profiles
 }
