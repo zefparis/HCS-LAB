@@ -34,6 +34,14 @@ type ErrorResponse struct {
 	Code    int    `json:"code"`
 }
 
+// GenerateRequest wraps the input profile to support both flat and nested ("hcs") payloads
+type GenerateRequest struct {
+	// HCS allows payloads of the form { "hcs": { ...InputProfile... } }
+	HCS *hcs.InputProfile `json:"hcs,omitempty"`
+	// Embedded InputProfile allows flat payloads { ...InputProfile... }
+	hcs.InputProfile
+}
+
 func main() {
 	// Get port from environment
 	port := os.Getenv("PORT")
@@ -113,11 +121,19 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleGenerate(w http.ResponseWriter, r *http.Request) {
-	// Parse request body
-	var input hcs.InputProfile
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	// Parse request body, accepting both flat and nested ("hcs") profiles
+	var req GenerateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		sendError(w, http.StatusBadRequest, "Invalid JSON", err.Error())
 		return
+	}
+
+	// Select the effective input profile
+	var input hcs.InputProfile
+	if req.HCS != nil {
+		input = *req.HCS
+	} else {
+		input = req.InputProfile
 	}
 
 	// Generate HCS codes
