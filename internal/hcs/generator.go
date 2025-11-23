@@ -201,6 +201,17 @@ func (g *Generator) validateInput(in *InputProfile) error {
 		return err
 	}
 
+	// Apply sensible defaults for interaction preferences when fields are empty
+	if in.Interaction.Pace == "" {
+		in.Interaction.Pace = "balanced"
+	}
+	if in.Interaction.Structure == "" {
+		in.Interaction.Structure = "medium"
+	}
+	if in.Interaction.Tone == "" {
+		in.Interaction.Tone = "neutral"
+	}
+
 	// Validate interaction preferences
 	validPace := map[string]bool{"balanced": true, "fast": true, "slow": true}
 	if !validPace[in.Interaction.Pace] {
